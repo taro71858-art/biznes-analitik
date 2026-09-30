@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <!-- Blue Circle -->
+  <circle cx="256" cy="256" r="236" fill="url(#blueGrad)" />
+
+  <!-- Inner subtle glow ring -->
+  <circle cx="256" cy="256" r="236" fill="none" stroke="#60a5fa" stroke-width="6" opacity="0.4" />
+
+  <!-- Base baseline / axis -->
+  <line x1="120" y1="360" x2="392" y2="360" stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity="0.4" />
+
+  <!-- Area under the curve -->
+  <path d="M 140 360 L 140 320 L 215 270 L 285 295 L 365 175 L 365 360 Z" fill="url(#areaGrad)" />
+
+  <!-- Growth Line -->
+  <polyline
+    points="140,320 215,270 285,295 365,175"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Upward Trend Arrow Head -->
+  <polygon points="365,145 385,195 345,195" fill="#ffffff" />
+
+  <!-- Data points on nodes -->
+  <circle cx="140" cy="320" r="14" fill="#ffffff" />
+  <circle cx="215" cy="270" r="14" fill="#ffffff" />
+  <circle cx="285" cy="295" r="14" fill="#ffffff" />
+  <circle cx="365" cy="175" r="16" fill="#ffffff" />
+  <circle cx="365" cy="175" r="8" fill="#2563eb" />
+</svg>

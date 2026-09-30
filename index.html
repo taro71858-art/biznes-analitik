@@ -1,0 +1,2862 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Бизнес-аналитик — финансовый экспресс-анализ малого бизнеса</title>
+  <meta name="description" content="Мобильный финансовый экспресс-анализ малого бизнеса: расчет чистой прибыли, прогнозирование доходов, калькулятор валют и отраслевые нормы." />
+  
+  <!-- PWA & Mobile Meta -->
+  <meta name="theme-color" content="#070c18" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Аналитик" />
+  
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Google Fonts: Manrope & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #070c18;
+      --card-bg: rgba(15, 23, 42, 0.72);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #2563eb;
+      --primary-glow: rgba(37, 99, 235, 0.35);
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.14);
+      --rose-border: rgba(244, 63, 94, 0.45);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.14);
+      --purple: #8b5cf6;
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #060a14 radial-gradient(circle at 50% -10%, #1e3a8a 0%, #0b1329 45%, #050811 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 90px 0; /* Space for bottom nav */
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 19px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .currency-group {
+      display: flex;
+      background: rgba(11, 17, 32, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 2px;
+    }
+
+    .currency-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      width: 26px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .currency-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 6px var(--primary-glow);
+    }
+
+    .icon-btn {
+      background: rgba(11, 17, 32, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      height: 32px;
+      padding: 0 9px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.95);
+      background: #1e293b;
+    }
+
+    /* PWA Install Banner */
+    #install-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .install-banner-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #93c5fd;
+    }
+
+    .install-banner-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .install-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 10px var(--primary-glow);
+    }
+
+    /* Tab Sections (View Switching) */
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Card standard styling */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Niche Selection Grid */
+    .niche-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .niche-btn {
+      background: rgba(7, 12, 24, 0.7);
+      border: 1.5px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .niche-btn.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.14);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .niche-btn-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .niche-btn-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    /* Input Form elements */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .label-name {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .label-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(30, 41, 59, 0.8);
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 48px;
+      background: #070c18;
+      border: 1.5px solid #1e293b;
+      border-radius: var(--radius-md);
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 0 45px 0 14px;
+      outline: none;
+      transition: all 0.15s ease;
+      -moz-appearance: textfield;
+    }
+
+    .input-field::-webkit-outer-spin-button,
+    .input-field::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .input-currency {
+      position: absolute;
+      right: 14px;
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .input-field.revenue-input {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.04);
+    }
+
+    .input-field.revenue-input:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .primary-btn {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px var(--primary-glow);
+      transition: all 0.15s ease;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+      filter: brightness(0.95);
+    }
+
+    /* RED LOSS BANNER */
+    .loss-alert-card {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.18), #160b13);
+      border: 2px solid var(--rose-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(244, 63, 94, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .loss-alert-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .loss-mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f43f5e;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .loss-main-heading {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fda4af;
+      line-height: 1.3;
+    }
+
+    .loss-highlight-val {
+      color: #ffffff;
+      text-decoration: underline;
+      text-decoration-color: #f43f5e;
+    }
+
+    .breakeven-banner-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed rgba(244, 63, 94, 0.5);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 12.5px;
+      color: #fecdd3;
+    }
+
+    /* EMPTY REVENUE WARNING */
+    .empty-revenue-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1.5px dashed rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: #fde68a;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .metric-card {
+      background: rgba(7, 12, 24, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.25s ease;
+    }
+
+    .metric-card.full-width {
+      grid-column: 1 / -1;
+      padding: 14px;
+    }
+
+    .metric-card.profit-positive {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(7, 12, 24, 0.9));
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 4px 20px var(--emerald-glow);
+    }
+
+    .metric-card.profit-negative {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.16), rgba(7, 12, 24, 0.9));
+      border-color: rgba(244, 63, 94, 0.4);
+      box-shadow: 0 4px 20px rgba(244, 63, 94, 0.2);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-val {
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .metric-val.large {
+      font-size: 28px;
+    }
+
+    .val-positive { color: #34d399; }
+    .val-negative { color: #fb7185; }
+    .val-neutral { color: #94a3b8; }
+
+    .metric-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: 3px;
+    }
+
+    .badge-positive {
+      background: var(--emerald-bg);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .badge-negative {
+      background: var(--rose-bg);
+      color: #fb7185;
+      border: 1px solid rgba(251, 113, 133, 0.3);
+    }
+
+    .badge-neutral {
+      background: #1e293b;
+      color: #cbd5e1;
+    }
+
+    /* Comparison Table: Articles vs Niche Norms */
+    .norms-table-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .norms-table-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .norm-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(7, 12, 24, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .norm-row.is-over {
+      border-color: rgba(244, 63, 94, 0.5);
+      background: rgba(244, 63, 94, 0.06);
+    }
+
+    .norm-row.is-ok {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .norm-article-name {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .norm-article-rule {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .norm-article-values {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .norm-sum {
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .norm-status-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 12px;
+    }
+
+    .pill-over {
+      background: rgba(244, 63, 94, 0.2);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+
+    .pill-ok {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Expense Breakdown Bar */
+    .expense-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .progress-bar-track {
+      height: 8px;
+      width: 100%;
+      background: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-segment {
+      height: 100%;
+      transition: width 0.35s ease-out;
+    }
+
+    .seg-rent { background: #3b82f6; }
+    .seg-salaries { background: #8b5cf6; }
+    .seg-ads { background: #f59e0b; }
+    .seg-other { background: #64748b; }
+
+    .breakdown-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Beautiful Analyst Response Card */
+    .analysis-card {
+      background: rgba(13, 20, 36, 0.88);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .analysis-card.loss-theme {
+      background: rgba(22, 12, 22, 0.92);
+      border-color: rgba(244, 63, 94, 0.45);
+    }
+
+    .analysis-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .analysis-tag-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .analysis-expert-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: #93c5fd;
+      letter-spacing: 0.5px;
+    }
+
+    .report-main-headline {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    /* Colored status banner */
+    .report-status-banner {
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .report-status-banner.green {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    .report-status-banner.yellow {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+
+    .report-status-banner.red {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      color: #fda4af;
+    }
+
+    /* Table styling (fits phone screen without scroll) */
+    .table-card-wrapper {
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 12, 24, 0.85);
+      border-radius: 14px;
+    }
+
+    .table-card-header {
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .report-financial-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      table-layout: fixed;
+    }
+
+    .report-financial-table th {
+      padding: 9px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 700;
+    }
+
+    .report-financial-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .report-financial-table .td-icon {
+      margin-right: 4px;
+      display: inline-block;
+    }
+
+    .report-financial-table .col-sum {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .report-financial-table .col-pct {
+      text-align: right;
+      color: #94a3b8;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .report-financial-table .row-profit.profit-positive {
+      background: rgba(16, 185, 129, 0.14);
+      color: #34d399;
+      font-weight: 800;
+    }
+
+    .report-financial-table .row-profit.profit-positive td {
+      color: #34d399;
+    }
+
+    .report-financial-table .row-profit.profit-warning {
+      background: rgba(245, 158, 11, 0.14);
+      color: #fbbf24;
+      font-weight: 800;
+    }
+
+    .report-financial-table .row-profit.profit-warning td {
+      color: #fbbf24;
+    }
+
+    .report-financial-table .row-profit.profit-negative {
+      background: rgba(244, 63, 94, 0.16);
+      color: #fb7185;
+      font-weight: 800;
+    }
+
+    .report-financial-table .row-profit.profit-negative td {
+      color: #fb7185;
+    }
+
+    /* Section blocks */
+    .analysis-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-title-pill {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-body-text {
+      font-size: 15px;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    .calc-steps-card {
+      background: #050811;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .calc-step-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .calc-step-val {
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    /* 3 Action cards with icons */
+    .action-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .single-action-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: transform 0.15s ease;
+    }
+
+    .action-icon-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .action-icon-badge.loss-badge {
+      background: rgba(244, 63, 94, 0.18);
+      border-color: rgba(244, 63, 94, 0.35);
+    }
+
+    .action-content-text {
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .action-content-text strong {
+      color: #ffffff;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Forecast Module Styling */
+    .quick-pct-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+
+    .quick-pct-btn {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .quick-pct-btn.active {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+    }
+
+    .range-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #1e293b;
+      outline: none;
+      accent-color: #8b5cf6;
+      cursor: pointer;
+    }
+
+    .forecast-metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .forecast-box {
+      background: #070c18;
+      border: 1px solid #1e293b;
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .forecast-box.highlight-box {
+      grid-column: 1 / -1;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), #070c18);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    /* Currency Converter Card */
+    .currency-calc-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .curr-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .curr-select {
+      background: #070c18;
+      border: 1px solid #1e293b;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      height: 48px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      outline: none;
+      width: 110px;
+      flex-shrink: 0;
+    }
+
+    .swap-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #93c5fd;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      transition: all 0.2s ease;
+    }
+
+    .swap-btn:active {
+      transform: rotate(180deg) scale(0.95);
+    }
+
+    .conv-result-box {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.16), #070c18);
+      border: 1.5px solid rgba(37, 99, 235, 0.4);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .conv-result-num {
+      font-size: 26px;
+      font-weight: 800;
+      color: #60a5fa;
+    }
+
+    .conv-rate-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .profit-in-curr-btn {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      height: 46px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .profit-in-curr-btn:active {
+      transform: scale(0.98);
+      background: rgba(16, 185, 129, 0.25);
+    }
+
+    /* History & Month comparison */
+    .history-item {
+      background: rgba(7, 12, 24, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .history-item.active-month {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(7, 12, 24, 0.94);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .bottom-nav-inner {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .nav-tab-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .nav-tab-btn .nav-icon {
+      font-size: 18px;
+    }
+
+    .nav-tab-btn.active {
+      color: #60a5fa;
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      background: #10b981;
+      color: #ffffff;
+      padding: 9px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      opacity: 0;
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">₽</div>
+        <div>
+          <h1 class="brand-title">Бизнес-аналитик</h1>
+          <p class="brand-subtitle">Экспресс-анализ малого бизнеса</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Quick Currency in Header -->
+        <div class="currency-group">
+          <button type="button" class="currency-btn active" onclick="setCurrency('₽')">₽</button>
+          <button type="button" class="currency-btn" onclick="setCurrency('$')">$</button>
+          <button type="button" class="currency-btn" onclick="setCurrency('€')">€</button>
+          <button type="button" class="currency-btn" onclick="setCurrency('₸')">₸</button>
+        </div>
+
+        <!-- Notification Bell Button -->
+        <button type="button" class="icon-btn" id="header-bell-btn" title="Напоминания обновить данные" onclick="openNotifSection()">
+          <span id="header-bell-icon">🔔</span>
+        </button>
+
+        <button type="button" class="icon-btn" title="Очистить форму" onclick="resetForm()">
+          ↺
+        </button>
+      </div>
+    </header>
+
+    <!-- PWA Install Banner -->
+    <div id="install-banner">
+      <div>
+        <div class="install-banner-title">📱 Установить на телефон</div>
+        <div class="install-banner-desc">Запуск с экрана в 1 клик без браузера</div>
+      </div>
+      <button type="button" class="install-btn" onclick="triggerPWAInstall()">Установить</button>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 1: АНАЛИЗ (Main Analysis Form & Results)                 -->
+    <!-- ============================================================= -->
+    <div id="tab-analysis" class="tab-content active">
+
+      <!-- Niche Selection -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">🎯 Ниша бизнеса</span>
+          <span class="label-tag" id="niche-badge-name">Кафе / Общепит</span>
+        </div>
+        <div class="niche-grid">
+          <button type="button" class="niche-btn active" id="niche-btn-cafe" onclick="selectNiche('cafe')">
+            <span class="niche-btn-title">☕ Кафе / Общепит</span>
+            <span class="niche-btn-desc">ФОТ ≤ 30%, аренда ≤ 20%, реклама ≤ 8%</span>
+          </button>
+          <button type="button" class="niche-btn" id="niche-btn-retail" onclick="selectNiche('retail')">
+            <span class="niche-btn-title">📦 WB / Ozon / Розница</span>
+            <span class="niche-btn-desc">ФОТ ≤ 20%, аренда ≤ 10%, реклама ≤ 25%</span>
+          </button>
+          <button type="button" class="niche-btn" id="niche-btn-beauty" onclick="selectNiche('beauty')">
+            <span class="niche-btn-title">💇‍♀️ Салон красоты</span>
+            <span class="niche-btn-desc">ФОТ ≤ 45%, аренда ≤ 20%, реклама ≤ 12%</span>
+          </button>
+          <button type="button" class="niche-btn" id="niche-btn-services" onclick="selectNiche('services')">
+            <span class="niche-btn-title">💻 Услуги / IT</span>
+            <span class="niche-btn-desc">ФОТ ≤ 55%, аренда ≤ 8%, реклама ≤ 18%</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Input Form -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">📝 Показатели за месяц</span>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <span class="label-name">1. Выручка (доход)</span>
+            <span class="label-tag">Обязательно</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="input-revenue" class="input-field revenue-input" inputmode="numeric" placeholder="0" value="550000" oninput="handleInputChange()" />
+            <span class="input-currency currency-sym">₽</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <span class="label-name">2. Аренда и помещение</span>
+            <span class="label-tag" id="tag-norm-rent">Норма ≤ 20%</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="input-rent" class="input-field" inputmode="numeric" placeholder="0" value="90000" oninput="handleInputChange()" />
+            <span class="input-currency currency-sym">₽</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <span class="label-name">3. Зарплаты (ФОТ)</span>
+            <span class="label-tag" id="tag-norm-salaries">Норма ≤ 30%</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="input-salaries" class="input-field" inputmode="numeric" placeholder="0" value="160000" oninput="handleInputChange()" />
+            <span class="input-currency currency-sym">₽</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <span class="label-name">4. Реклама и маркетинг</span>
+            <span class="label-tag" id="tag-norm-ads">Норма ≤ 8%</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="input-ads" class="input-field" inputmode="numeric" placeholder="0" value="45000" oninput="handleInputChange()" />
+            <span class="input-currency currency-sym">₽</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <span class="label-name">5. Прочие расходы</span>
+            <span class="label-tag" id="tag-norm-other">Сырьё, налоги</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="input-other" class="input-field" inputmode="numeric" placeholder="0" value="55000" oninput="handleInputChange()" />
+            <span class="input-currency currency-sym">₽</span>
+          </div>
+        </div>
+
+        <button type="button" class="primary-btn" onclick="runAnalysis()">
+          Рассчитать показатели
+        </button>
+      </section>
+
+      <!-- Empty revenue prompt -->
+      <div id="empty-revenue-alert" class="empty-revenue-box" style="display: none;">
+        <span style="font-size:22px;">⚠️</span>
+        <div style="font-size:12.5px;">
+          <b>Укажите доход (выручку) бизнеса</b><br/>
+          Без дохода невозможно рассчитать чистую прибыль и выявить перерасходы.
+        </div>
+      </div>
+
+      <!-- Red Loss Alert Mode -->
+      <div id="loss-alert-box" class="loss-alert-card" style="display: none;">
+        <div class="loss-alert-top">
+          <span class="loss-mode-badge">🚨 РЕЖИМ «УБЫТОК»</span>
+          <span id="loss-pct-badge" class="metric-badge badge-negative">-0% от дохода</span>
+        </div>
+        <div class="loss-main-heading">
+          Бизнес в минусе на <span class="loss-highlight-val" id="loss-amount-text">0 ₽</span> в месяц
+        </div>
+        <div class="breakeven-banner-box">
+          Чтобы выйти в ноль, нужен доход минимум <b id="loss-breakeven-needed" style="color:#ffffff;">0 ₽</b>. 
+          Не хватает: <b id="loss-gap-text" style="color:#fda4af;">0 ₽</b>.
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <section class="card" id="results-section">
+        <div class="card-header">
+          <span class="card-title">📈 Расчёт финансовых метрик</span>
+        </div>
+
+        <div class="metrics-grid">
+          <!-- Profit -->
+          <div class="metric-card full-width" id="profit-card">
+            <div class="metric-label">
+              <span>Чистая прибыль / Убыток</span>
+              <span id="profit-badge" class="metric-badge">...</span>
+            </div>
+            <div class="metric-val large" id="metric-profit">0 ₽</div>
+          </div>
+
+          <!-- Margin -->
+          <div class="metric-card">
+            <div class="metric-label">Маржинальность</div>
+            <div class="metric-val" id="metric-margin">0.0%</div>
+            <span id="margin-badge" class="metric-badge">...</span>
+          </div>
+
+          <!-- Break-even -->
+          <div class="metric-card">
+            <div class="metric-label">Безубыточность</div>
+            <div class="metric-val" id="metric-breakeven">0 ₽</div>
+            <span id="breakeven-badge" class="metric-badge">...</span>
+          </div>
+
+          <!-- Expenses Breakdown -->
+          <div class="metric-card full-width">
+            <div class="metric-label">
+              <span>Все расходы:</span>
+              <span id="metric-total-expenses" style="font-weight:700; color:#fff;">0 ₽</span>
+            </div>
+
+            <div class="expense-bar-container">
+              <div class="progress-bar-track">
+                <div id="bar-rent" class="progress-segment seg-rent" style="width: 25%"></div>
+                <div id="bar-salaries" class="progress-segment seg-salaries" style="width: 45%"></div>
+                <div id="bar-ads" class="progress-segment seg-ads" style="width: 15%"></div>
+                <div id="bar-other" class="progress-segment seg-other" style="width: 15%"></div>
+              </div>
+              <div class="breakdown-legend">
+                <div class="legend-item"><span class="legend-dot seg-rent"></span> Аренда: <b id="pct-rent">0%</b></div>
+                <div class="legend-item"><span class="legend-dot seg-salaries"></span> ФОТ: <b id="pct-salaries">0%</b></div>
+                <div class="legend-item"><span class="legend-dot seg-ads"></span> Реклама: <b id="pct-ads">0%</b></div>
+                <div class="legend-item"><span class="legend-dot seg-other"></span> Прочее: <b id="pct-other">0%</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Norms Check -->
+        <div class="norms-table-container">
+          <div class="norms-table-title" id="norms-table-title">Доли статей от дохода и нормы</div>
+          <div class="norm-row" id="norm-row-rent">
+            <div><span class="norm-article-name">🏢 Аренда</span> <div class="norm-article-rule" id="rule-desc-rent">до 20%</div></div>
+            <div class="norm-article-values"><span class="norm-sum" id="norm-val-rent">0 ₽</span><span class="norm-status-pill pill-ok" id="norm-pill-rent">В норме</span></div>
+          </div>
+          <div class="norm-row" id="norm-row-salaries">
+            <div><span class="norm-article-name">👥 ФОТ</span> <div class="norm-article-rule" id="rule-desc-salaries">до 30%</div></div>
+            <div class="norm-article-values"><span class="norm-sum" id="norm-val-salaries">0 ₽</span><span class="norm-status-pill pill-ok" id="norm-pill-salaries">В норме</span></div>
+          </div>
+          <div class="norm-row" id="norm-row-ads">
+            <div><span class="norm-article-name">📢 Реклама</span> <div class="norm-article-rule" id="rule-desc-ads">до 8%</div></div>
+            <div class="norm-article-values"><span class="norm-sum" id="norm-val-ads">0 ₽</span><span class="norm-status-pill pill-ok" id="norm-pill-ads">В норме</span></div>
+          </div>
+          <div class="norm-row" id="norm-row-other">
+            <div><span class="norm-article-name">📦 Прочее</span> <div class="norm-article-rule" id="rule-desc-other">Сырьё/софт</div></div>
+            <div class="norm-article-values"><span class="norm-sum" id="norm-val-other">0 ₽</span><span class="norm-status-pill pill-ok" id="norm-pill-other">В норме</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Beautiful Analyst Response Card -->
+      <section class="analysis-card" id="analysis-block">
+        <div class="analysis-card-top">
+          <div class="analysis-tag-row">
+            <span class="analysis-expert-badge">💼 АНАЛИТИЧЕСКИЙ ОТЧЁТ</span>
+            <button type="button" class="icon-btn" onclick="copyReport()">📋 Скопировать</button>
+          </div>
+          
+          <!-- 1. Крупный заголовок-вывод -->
+          <h2 class="report-main-headline" id="report-main-headline">
+            Бизнес приносит 110 000 ₽ чистой прибыли
+          </h2>
+
+          <!-- 2. Цветная плашка под заголовком -->
+          <div class="report-status-banner green" id="report-status-banner">
+            <span class="status-banner-icon" id="status-banner-icon">🟢</span>
+            <span class="status-banner-text" id="status-banner-text">Здоровая прибыль • Маржинальность 20.0%</span>
+          </div>
+        </div>
+
+        <!-- 3. Таблица «Статья | Сумма | % от дохода» -->
+        <div class="table-card-wrapper">
+          <div class="table-card-header">
+            <span>📊 СТРУКТУРА ДОХОДОВ И РАСХОДОВ</span>
+          </div>
+          <table class="report-financial-table" id="report-financial-table">
+            <thead>
+              <tr>
+                <th style="text-align: left;">Статья</th>
+                <th style="text-align: right;">Сумма</th>
+                <th style="text-align: right; width: 85px;">% дохода</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-revenue">
+                <td><span class="td-icon">💰</span> Доход (выручка)</td>
+                <td class="col-sum" id="tbl-revenue-sum">0 ₽</td>
+                <td class="col-pct" id="tbl-revenue-pct">100.0%</td>
+              </tr>
+              <tr class="row-expense">
+                <td><span class="td-icon">🏢</span> Аренда</td>
+                <td class="col-sum" id="tbl-rent-sum">0 ₽</td>
+                <td class="col-pct" id="tbl-rent-pct">0%</td>
+              </tr>
+              <tr class="row-expense">
+                <td><span class="td-icon">👥</span> Зарплаты (ФОТ)</td>
+                <td class="col-sum" id="tbl-salaries-sum">0 ₽</td>
+                <td class="col-pct" id="tbl-salaries-pct">0%</td>
+              </tr>
+              <tr class="row-expense">
+                <td><span class="td-icon">📢</span> Реклама</td>
+                <td class="col-sum" id="tbl-ads-sum">0 ₽</td>
+                <td class="col-pct" id="tbl-ads-pct">0%</td>
+              </tr>
+              <tr class="row-expense">
+                <td><span class="td-icon">📦</span> Прочие расходы</td>
+                <td class="col-sum" id="tbl-other-sum">0 ₽</td>
+                <td class="col-pct" id="tbl-other-pct">0%</td>
+              </tr>
+              <tr class="row-profit profit-positive" id="tbl-row-profit">
+                <td id="tbl-profit-name"><b>✨ Чистая прибыль</b></td>
+                <td class="col-sum" id="tbl-profit-sum"><b>0 ₽</b></td>
+                <td class="col-pct" id="tbl-profit-pct"><b>0.0%</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 4. Блок «Почему так» -->
+        <div class="analysis-section">
+          <div class="section-title-pill">
+            <span>🔍 Почему так случилось</span>
+          </div>
+          <p class="section-body-text" id="report-reason">
+            ...
+          </p>
+        </div>
+
+        <!-- 5. Блок «Расчёт» в виде шагов -->
+        <div class="analysis-section">
+          <div class="section-title-pill">
+            <span>🧮 Пошаговый расчёт</span>
+          </div>
+          <div class="calc-steps-card" id="report-calc-steps">
+            <!-- Populated with clean numbered step items -->
+          </div>
+        </div>
+
+        <!-- 6. Блок «Что делать: 3 действия» -->
+        <div class="analysis-section">
+          <div class="section-title-pill">
+            <span>🚀 Что делать: 3 конкретных действия</span>
+          </div>
+          <div class="action-cards-grid" id="report-action-cards">
+            <!-- Populated with 3 distinct cards with icons -->
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 2: ЧТО ЕСЛИ (Forecasting & Operating Leverage)           -->
+    <!-- ============================================================= -->
+    <div id="tab-forecast" class="tab-content">
+      <section class="card" style="border-color: rgba(139, 92, 246, 0.4);">
+        <div class="card-header">
+          <span class="card-title">🔮 Прогноз чистой прибыли</span>
+          <span class="label-tag" style="color: #c4b5fd;">Операционный рычаг</span>
+        </div>
+
+        <div class="quick-pct-row">
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(-20)">-20%</button>
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(-10)">-10%</button>
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(0)">0%</button>
+          <button type="button" class="quick-pct-btn active" id="btn-fc-plus10" onclick="setForecastDelta(10)">+10%</button>
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(20)">+20%</button>
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(30)">+30%</button>
+          <button type="button" class="quick-pct-btn" onclick="setForecastDelta(50)">+50%</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+            <span style="font-weight:700;">Изменение дохода:</span>
+            <span id="forecast-delta-badge" style="font-size:16px; font-weight:800; color:#34d399;">+10%</span>
+          </div>
+          <input type="range" id="forecast-range-slider" class="range-slider" min="-50" max="100" step="5" value="10" oninput="handleForecastSliderChange(this.value)" />
+        </div>
+
+        <div style="background:#070c18; padding:10px 12px; border-radius:12px; border:1px solid #1e293b; font-size:11.5px; display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; justify-content:space-between;">
+            <span>🔒 Постоянные расходы (аренда, оклады):</span>
+            <b id="fc-fixed-sum" style="color:#fff;">0 ₽</b>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>📈 Переменные расходы (сырьё, бонусы, реклама):</span>
+            <b id="fc-variable-sum" style="color:#fff;">0 ₽</b>
+          </div>
+        </div>
+
+        <div class="forecast-metrics-grid">
+          <div class="forecast-box highlight-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#94a3b8;">
+              <span>Прогнозируемая чистая прибыль:</span>
+              <span id="forecast-profit-delta-tag" class="label-tag badge-positive">+0%</span>
+            </div>
+            <div class="metric-val large" id="forecast-profit-num" style="font-size:26px;">0 ₽</div>
+            <div id="forecast-profit-diff-text" style="font-size:11.5px; color:#cbd5e1;">Прирост: +0 ₽</div>
+          </div>
+
+          <div class="forecast-box">
+            <span style="font-size:11px; color:#94a3b8;">Новый доход:</span>
+            <div class="metric-val" id="forecast-revenue-num">0 ₽</div>
+            <span id="forecast-revenue-tag" class="label-tag badge-positive">+0 ₽</span>
+          </div>
+
+          <div class="forecast-box">
+            <span style="font-size:11px; color:#94a3b8;">Новые расходы:</span>
+            <div class="metric-val" id="forecast-expenses-num">0 ₽</div>
+            <span id="forecast-expenses-tag" class="label-tag">+0 ₽</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(139,92,246,0.3); border-radius:12px; padding:12px; font-size:12px; line-height:1.45;" id="forecast-leverage-text">
+          Загрузка эффекта масштаба...
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 3: ВАЛЮТЫ (Currency Calculator & Profit Conversion)      -->
+    <!-- ============================================================= -->
+    <div id="tab-currency" class="tab-content">
+      <section class="currency-calc-card">
+        <div class="card-header">
+          <span class="card-title">💱 Калькулятор валют</span>
+          <span class="label-tag" id="rates-status-tag">Онлайн курсы</span>
+        </div>
+
+        <!-- From Amount & Currency -->
+        <div class="curr-row">
+          <select id="curr-from-select" class="curr-select" onchange="convertCurrency()">
+            <option value="RUB">RUB ₽</option>
+            <option value="USD">USD $</option>
+            <option value="EUR">EUR €</option>
+            <option value="KZT">KZT ₸</option>
+            <option value="UAH">UAH ₴</option>
+            <option value="TRY">TRY ₺</option>
+            <option value="CNY">CNY ¥</option>
+            <option value="GBP">GBP £</option>
+            <option value="GEL">GEL ₾</option>
+            <option value="AED">AED د.إ</option>
+            <option value="PLN">PLN zł</option>
+            <option value="BYN">BYN Br</option>
+            <option value="UZS">UZS so'm</option>
+          </select>
+          <input type="number" id="curr-amount-input" class="input-field" placeholder="1000" value="1000" oninput="convertCurrency()" />
+        </div>
+
+        <!-- Swap Button -->
+        <button type="button" class="swap-btn" title="Поменять валюты местами" onclick="swapCurrencies()">
+          ⇄
+        </button>
+
+        <!-- To Currency -->
+        <div class="curr-row">
+          <select id="curr-to-select" class="curr-select" onchange="convertCurrency()">
+            <option value="USD" selected>USD $</option>
+            <option value="RUB">RUB ₽</option>
+            <option value="EUR">EUR €</option>
+            <option value="KZT">KZT ₸</option>
+            <option value="UAH">UAH ₴</option>
+            <option value="TRY">TRY ₺</option>
+            <option value="CNY">CNY ¥</option>
+            <option value="GBP">GBP £</option>
+            <option value="GEL">GEL ₾</option>
+            <option value="AED">AED د.إ</option>
+            <option value="PLN">PLN zł</option>
+            <option value="BYN">BYN Br</option>
+            <option value="UZS">UZS so'm</option>
+          </select>
+          <div style="flex:1; display:flex; align-items:center; background:#070c18; border:1.5px solid #1e293b; border-radius:14px; height:48px; padding:0 14px; font-weight:800; font-size:17px; color:#60a5fa;" id="curr-result-preview">
+            0 USD
+          </div>
+        </div>
+
+        <!-- Big Conversion Result -->
+        <div class="conv-result-box">
+          <div style="font-size:12px; color:#94a3b8;">Результат конвертации:</div>
+          <div class="conv-result-num" id="curr-result-big">0.00 $</div>
+          <div class="conv-rate-desc" id="curr-rate-label">Курс: 1 USD = 0 RUB</div>
+          <div style="font-size:10px; color:#64748b; margin-top:2px;" id="curr-update-date">Курс ориентировочный, дата обновления: сегодня</div>
+        </div>
+
+        <!-- Manual Rate Adjustment (if needed or offline) -->
+        <div style="background:#070c18; padding:10px 12px; border-radius:12px; border:1px solid #1e293b; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <span style="font-size:11px; color:#94a3b8;">Курс обмена вручную:</span>
+          <input type="number" step="0.0001" id="custom-rate-input" class="input-field" style="width:110px; height:36px; font-size:13px; padding:0 8px;" placeholder="Курс" oninput="applyCustomRate()" />
+        </div>
+
+        <!-- Convert Profit Button -->
+        <button type="button" class="profit-in-curr-btn" onclick="convertCurrentProfitToSelectedCurrency()">
+          💵 Показать прибыль бизнеса в <span id="btn-profit-curr-name">USD</span>
+        </button>
+        <div id="profit-converted-display" style="display:none; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:10px 12px; font-size:12.5px; line-height:1.45; color:#a7f3d0; text-align:center;">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 4: ИСТОРИЯ (Monthly Records & Comparison)                 -->
+    <!-- ============================================================= -->
+    <div id="tab-history" class="tab-content">
+      
+      <!-- Period Selector & Save Button -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">📅 Выбор месяца</span>
+          <button type="button" class="save-month-btn" onclick="saveCurrentMonth()">
+            💾 Сохранить месяц
+          </button>
+        </div>
+        <select id="period-month-select" class="curr-select" style="width:100%;" onchange="handleMonthChange()">
+          <!-- Populated by JS -->
+        </select>
+      </section>
+
+      <!-- Month Comparison Card -->
+      <section class="card" id="compare-section" style="display: none;">
+        <div class="card-header">
+          <span class="card-title">📊 Сравнение с прошлым месяцем</span>
+          <span class="label-tag" id="compare-prev-month-name">...</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div style="background:#070c18; padding:10px; border-radius:12px; border:1px solid #1e293b;">
+            <div style="font-size:10.5px; color:#94a3b8;">Динамика прибыли:</div>
+            <div id="compare-profit-val" style="font-size:16px; font-weight:800; color:#34d399;">+0%</div>
+            <div id="compare-profit-tag" style="font-size:10px; color:#94a3b8;">+0 ₽</div>
+          </div>
+          <div style="background:#070c18; padding:10px; border-radius:12px; border:1px solid #1e293b;">
+            <div style="font-size:10.5px; color:#94a3b8;">Динамика дохода:</div>
+            <div id="compare-revenue-val" style="font-size:16px; font-weight:800; color:#34d399;">+0%</div>
+            <div id="compare-revenue-tag" style="font-size:10px; color:#94a3b8;">+0 ₽</div>
+          </div>
+        </div>
+
+        <div style="background:#070c18; padding:10px 12px; border-radius:12px; border:1px solid #1e293b; font-size:12px; line-height:1.4;" id="key-change-text">
+          Больше всего изменились расходы на: <strong>...</strong>
+        </div>
+      </section>
+
+      <!-- History List -->
+      <section class="card">
+        <div class="card-header">
+          <span class="card-title">📚 Сохранённые расчёты</span>
+          <span class="label-tag" id="history-count-badge">0</span>
+        </div>
+        <div class="history-list" id="history-list-container">
+          <!-- Populated from localStorage -->
+        </div>
+      </section>
+
+      <!-- Push Notification Settings Card -->
+      <section class="card" id="notif-settings-card" style="border-color: rgba(37, 99, 235, 0.35);">
+        <div class="card-header">
+          <span class="card-title">🔔 Напоминания обновить данные</span>
+          <span class="label-tag" id="notif-status-badge">Выключено</span>
+        </div>
+
+        <div style="font-size: 13px; color: #cbd5e1; line-height: 1.45;">
+          Настройте напоминание через Web Notifications API, чтобы регулярно вносить актуальные доходы и расходы бизнеса.
+        </div>
+
+        <!-- Frequency selector: daily vs weekly -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="niche-btn active" id="btn-freq-daily" onclick="setNotifFrequency('daily')">
+            <span class="niche-btn-title">⏰ Ежедневно</span>
+            <span class="niche-btn-desc">Каждый день в удобное время</span>
+          </button>
+          <button type="button" class="niche-btn" id="btn-freq-weekly" onclick="setNotifFrequency('weekly')">
+            <span class="niche-btn-title">📅 Еженедельно</span>
+            <span class="niche-btn-desc">Раз в неделю в конце периода</span>
+          </button>
+        </div>
+
+        <!-- Time Picker & Enable switch -->
+        <div style="background: rgba(7, 12, 24, 0.85); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <div>
+            <div style="font-size: 11px; color: #94a3b8; font-weight: 700;">Время напоминания:</div>
+            <input type="time" id="notif-time-input" class="input-field" style="width: 125px; height: 38px; font-size: 15px; padding: 0 10px; margin-top: 4px;" value="19:00" onchange="saveNotificationSettings()" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+            <div style="font-size: 11px; color: #94a3b8; font-weight: 700;">Уведомления:</div>
+            <button type="button" class="primary-btn" id="toggle-notif-btn" style="height: 38px; padding: 0 16px; font-size: 13px; width: auto;" onclick="toggleNotifications()">
+              Включить
+            </button>
+          </div>
+        </div>
+
+        <!-- Test Notification Button -->
+        <button type="button" class="icon-btn" style="height: 44px; width: 100%; justify-content: center; font-size: 13px; font-weight: 700; background: rgba(37, 99, 235, 0.12); color: #93c5fd; border-color: rgba(37, 99, 235, 0.35);" onclick="testPushNotification()">
+          🧪 Отправить тестовое напоминание
+        </button>
+
+        <div style="font-size: 11px; color: #64748b; text-align: center;" id="notif-perm-status-note">
+          Текст: «Время обновить данные вашего бизнеса»
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <button type="button" class="nav-tab-btn active" id="btn-tab-analysis" onclick="switchTab('analysis')">
+        <span class="nav-icon">📊</span>
+        <span>Анализ</span>
+      </button>
+      <button type="button" class="nav-tab-btn" id="btn-tab-forecast" onclick="switchTab('forecast')">
+        <span class="nav-icon">🔮</span>
+        <span>Что если</span>
+      </button>
+      <button type="button" class="nav-tab-btn" id="btn-tab-currency" onclick="switchTab('currency')">
+        <span class="nav-icon">💱</span>
+        <span>Валюты</span>
+      </button>
+      <button type="button" class="nav-tab-btn" id="btn-tab-history" onclick="switchTab('history')">
+        <span class="nav-icon">📚</span>
+        <span>История</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Toast -->
+  <div id="toast">Готово</div>
+
+  <script>
+    // State
+    let currentCurrency = '₽';
+    let currentNicheKey = 'cafe';
+    let currentSelectedMonthId = '2026-09';
+    let forecastDeltaPct = 10;
+    let deferredInstallPrompt = null;
+
+    // Currency Rates cache (USD base)
+    let exchangeRates = {
+      USD: 1,
+      RUB: 92.5,
+      EUR: 0.92,
+      KZT: 480.0,
+      UAH: 41.2,
+      TRY: 34.1,
+      CNY: 7.15,
+      GBP: 0.77,
+      GEL: 2.73,
+      AED: 3.67,
+      PLN: 3.95,
+      BYN: 3.28,
+      UZS: 12700.0
+    };
+    let ratesLastUpdated = '30.09.2026';
+
+    const NICHES = {
+      cafe: {
+        name: 'Кафе / Общепит',
+        rentNorm: 20, salariesNorm: 30, adsNorm: 8, otherNorm: 35,
+        varShare: { rent: 0, salaries: 0.25, ads: 0.50, other: 0.90 }
+      },
+      retail: {
+        name: 'WB / Ozon / Розница',
+        rentNorm: 10, salariesNorm: 20, adsNorm: 25, otherNorm: 45,
+        varShare: { rent: 0, salaries: 0.35, ads: 0.75, other: 0.95 }
+      },
+      beauty: {
+        name: 'Салон красоты',
+        rentNorm: 20, salariesNorm: 45, adsNorm: 12, otherNorm: 15,
+        varShare: { rent: 0, salaries: 0.50, ads: 0.60, other: 0.80 }
+      },
+      services: {
+        name: 'Услуги / IT',
+        rentNorm: 8, salariesNorm: 55, adsNorm: 18, otherNorm: 12,
+        varShare: { rent: 0, salaries: 0.20, ads: 0.70, other: 0.40 }
+      }
+    };
+
+    const AVAILABLE_MONTHS = [
+      { id: '2026-10', name: 'Октябрь 2026' },
+      { id: '2026-09', name: 'Сентябрь 2026' },
+      { id: '2026-08', name: 'Август 2026' },
+      { id: '2026-07', name: 'Июль 2026' }
+    ];
+
+    const STORAGE_KEY = 'business_analyst_history_v2';
+    const RATES_STORAGE_KEY = 'business_analyst_rates_v1';
+
+    function fmtMoney(num) {
+      return new Intl.NumberFormat('ru-RU').format(Math.round(num)) + ' ' + currentCurrency;
+    }
+
+    function fmtPct(num) {
+      return (Number(num) || 0).toFixed(1) + '%';
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      const btn = document.getElementById(`btn-tab-${tabId}`);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (tabId === 'forecast') runForecastCalculation();
+      if (tabId === 'currency') convertCurrency();
+    }
+
+    // Switch Niche
+    function selectNiche(key) {
+      currentNicheKey = key;
+      const niche = NICHES[key];
+      document.querySelectorAll('.niche-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `niche-btn-${key}`);
+      });
+      document.getElementById('niche-badge-name').textContent = niche.name;
+      document.getElementById('tag-norm-rent').textContent = `Норма ≤ ${niche.rentNorm}%`;
+      document.getElementById('tag-norm-salaries').textContent = `Норма ≤ ${niche.salariesNorm}%`;
+      document.getElementById('tag-norm-ads').textContent = `Норма ≤ ${niche.adsNorm}%`;
+      document.getElementById('tag-norm-other').textContent = `Норма ≤ ${niche.otherNorm}%`;
+      runAnalysis();
+    }
+
+    function setCurrency(curr) {
+      currentCurrency = curr;
+      document.querySelectorAll('.currency-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim() === curr);
+      });
+      document.querySelectorAll('.currency-sym').forEach(el => el.textContent = curr);
+      runAnalysis();
+    }
+
+    function getValues() {
+      const rawRev = document.getElementById('input-revenue').value;
+      const revenue = rawRev === '' ? 0 : Math.max(0, parseFloat(rawRev) || 0);
+      return {
+        revenue,
+        isRevenueEntered: rawRev !== '' && parseFloat(rawRev) > 0,
+        rent: Math.max(0, parseFloat(document.getElementById('input-rent').value) || 0),
+        salaries: Math.max(0, parseFloat(document.getElementById('input-salaries').value) || 0),
+        ads: Math.max(0, parseFloat(document.getElementById('input-ads').value) || 0),
+        other: Math.max(0, parseFloat(document.getElementById('input-other').value) || 0)
+      };
+    }
+
+    function setValues(v) {
+      document.getElementById('input-revenue').value = v.revenue !== undefined ? v.revenue : '';
+      document.getElementById('input-rent').value = v.rent !== undefined ? v.rent : '';
+      document.getElementById('input-salaries').value = v.salaries !== undefined ? v.salaries : '';
+      document.getElementById('input-ads').value = v.ads !== undefined ? v.ads : '';
+      document.getElementById('input-other').value = v.other !== undefined ? v.other : '';
+    }
+
+    function resetForm() {
+      setValues({ revenue: '', rent: '', salaries: '', ads: '', other: '' });
+      runAnalysis();
+      showToast('Форма очищена');
+    }
+
+    function handleInputChange() {
+      runAnalysis();
+    }
+
+    // Main Analysis Calculation
+    function runAnalysis() {
+      const { revenue, isRevenueEntered, rent, salaries, ads, other } = getValues();
+      const niche = NICHES[currentNicheKey] || NICHES.cafe;
+
+      const totalExpenses = rent + salaries + ads + other;
+      const profit = revenue - totalExpenses;
+      const margin = revenue > 0 ? (profit / revenue) * 100 : (profit === 0 ? 0 : -100);
+      const breakEven = totalExpenses;
+      const safetyMarginAmount = revenue - breakEven;
+      const safetyMarginPct = breakEven > 0 ? ((revenue - breakEven) / breakEven) * 100 : 0;
+
+      // Shares
+      const rentShare = revenue > 0 ? (rent / revenue) * 100 : 0;
+      const salariesShare = revenue > 0 ? (salaries / revenue) * 100 : 0;
+      const adsShare = revenue > 0 ? (ads / revenue) * 100 : 0;
+      const otherShare = revenue > 0 ? (other / revenue) * 100 : 0;
+
+      // Profit Card
+      const profitEl = document.getElementById('metric-profit');
+      const profitCard = document.getElementById('profit-card');
+      const profitBadge = document.getElementById('profit-badge');
+      profitEl.textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit);
+
+      if (profit > 0) {
+        profitEl.className = 'metric-val large val-positive';
+        profitCard.className = 'metric-card full-width profit-positive';
+        profitBadge.className = 'metric-badge badge-positive';
+        profitBadge.textContent = 'Прибыль';
+      } else if (profit < 0) {
+        profitEl.className = 'metric-val large val-negative';
+        profitCard.className = 'metric-card full-width profit-negative';
+        profitBadge.className = 'metric-badge badge-negative';
+        profitBadge.textContent = 'Убыток';
+      } else {
+        profitEl.className = 'metric-val large val-neutral';
+        profitCard.className = 'metric-card full-width';
+        profitBadge.className = 'metric-badge badge-neutral';
+        profitBadge.textContent = 'Ноль';
+      }
+
+      // Margin
+      document.getElementById('metric-margin').textContent = fmtPct(margin);
+      const mBadge = document.getElementById('margin-badge');
+      if (margin >= 25) { mBadge.className = 'metric-badge badge-positive'; mBadge.textContent = 'Высокая'; }
+      else if (margin >= 10) { mBadge.className = 'metric-badge badge-positive'; mBadge.textContent = 'Здоровая'; }
+      else if (margin > 0) { mBadge.className = 'metric-badge badge-neutral'; mBadge.textContent = 'Низкая'; }
+      else { mBadge.className = 'metric-badge badge-negative'; mBadge.textContent = 'Отрицательная'; }
+
+      // Break-even
+      document.getElementById('metric-breakeven').textContent = fmtMoney(breakEven);
+      const beBadge = document.getElementById('breakeven-badge');
+      if (revenue > breakEven) { beBadge.className = 'metric-badge badge-positive'; beBadge.textContent = '+' + fmtPct(safetyMarginPct) + ' запас'; }
+      else if (revenue < breakEven) { beBadge.className = 'metric-badge badge-negative'; beBadge.textContent = '-' + fmtMoney(Math.abs(safetyMarginAmount)); }
+      else { beBadge.className = 'metric-badge badge-neutral'; beBadge.textContent = 'В нуле'; }
+
+      document.getElementById('metric-total-expenses').textContent = fmtMoney(totalExpenses);
+
+      // Breakdown bars
+      const pRent = totalExpenses > 0 ? (rent / totalExpenses) * 100 : 0;
+      const pSal = totalExpenses > 0 ? (salaries / totalExpenses) * 100 : 0;
+      const pAds = totalExpenses > 0 ? (ads / totalExpenses) * 100 : 0;
+      const pOther = totalExpenses > 0 ? (other / totalExpenses) * 100 : 0;
+      document.getElementById('bar-rent').style.width = pRent + '%';
+      document.getElementById('bar-salaries').style.width = pSal + '%';
+      document.getElementById('bar-ads').style.width = pAds + '%';
+      document.getElementById('bar-other').style.width = pOther + '%';
+      document.getElementById('pct-rent').textContent = fmtPct(pRent);
+      document.getElementById('pct-salaries').textContent = fmtPct(pSal);
+      document.getElementById('pct-ads').textContent = fmtPct(pAds);
+      document.getElementById('pct-other').textContent = fmtPct(pOther);
+
+      // Norms rows
+      updateNormRow('rent', rent, rentShare, niche.rentNorm);
+      updateNormRow('salaries', salaries, salariesShare, niche.salariesNorm);
+      updateNormRow('ads', ads, adsShare, niche.adsNorm);
+      updateNormRow('other', other, otherShare, niche.otherNorm);
+
+      // Loss banner check
+      const lossBox = document.getElementById('loss-alert-box');
+      const emptyAlert = document.getElementById('empty-revenue-alert');
+      const analysisBlock = document.getElementById('analysis-block');
+
+      if (!isRevenueEntered) {
+        emptyAlert.style.display = 'flex';
+        lossBox.style.display = 'none';
+        analysisBlock.style.display = 'none';
+        return;
+      }
+      emptyAlert.style.display = 'none';
+      analysisBlock.style.display = 'flex';
+
+      if (profit < 0) {
+        lossBox.style.display = 'flex';
+        document.getElementById('loss-amount-text').textContent = fmtMoney(Math.abs(profit));
+        document.getElementById('loss-pct-badge').textContent = '-' + fmtPct((Math.abs(profit)/revenue)*100) + ' от дохода';
+        document.getElementById('loss-breakeven-needed').textContent = fmtMoney(breakEven);
+        document.getElementById('loss-gap-text').textContent = fmtMoney(breakEven - revenue);
+        analysisBlock.className = 'analysis-card loss-theme';
+      } else {
+        lossBox.style.display = 'none';
+        analysisBlock.className = 'analysis-card';
+      }
+
+      // Generate Advice Report
+      generateReport({ revenue, rent, salaries, ads, other, totalExpenses, profit, margin, breakEven, rentShare, salariesShare, adsShare, otherShare, niche });
+      runForecastCalculation();
+    }
+
+    function updateNormRow(key, amount, share, norm) {
+      const row = document.getElementById(`norm-row-${key}`);
+      const val = document.getElementById(`norm-val-${key}`);
+      const pill = document.getElementById(`norm-pill-${key}`);
+      val.textContent = `${fmtMoney(amount)} (${fmtPct(share)})`;
+      if (share > norm) {
+        row.className = 'norm-row is-over';
+        pill.className = 'norm-status-pill pill-over';
+        pill.textContent = `Выше (+${fmtPct(share - norm)})`;
+      } else {
+        row.className = 'norm-row is-ok';
+        pill.className = 'norm-status-pill pill-ok';
+        pill.textContent = `Норма ≤ ${norm}%`;
+      }
+    }
+
+    function generateReport(d) {
+      const n = d.niche;
+      const articles = [
+        { name: 'зарплаты (ФОТ)', amount: d.salaries, share: d.salariesShare, norm: n.salariesNorm },
+        { name: 'аренда', amount: d.rent, share: d.rentShare, norm: n.rentNorm },
+        { name: 'реклама', amount: d.ads, share: d.adsShare, norm: n.adsNorm },
+        { name: 'прочие расходы', amount: d.other, share: d.otherShare, norm: n.otherNorm }
+      ];
+      articles.sort((a,b) => b.amount - a.amount);
+      const topExpense = articles[0];
+      const overArticles = articles.filter(a => a.share > a.norm);
+
+      const headlineEl = document.getElementById('report-main-headline');
+      const bannerEl = document.getElementById('report-status-banner');
+      const bannerIcon = document.getElementById('status-banner-icon');
+      const bannerText = document.getElementById('status-banner-text');
+
+      let reason = '';
+      let actions = [];
+
+      // 1. Headline & Status Banner
+      if (d.profit < 0) {
+        const lossAmount = Math.abs(d.profit);
+        headlineEl.textContent = `Бизнес в минусе на ${fmtMoney(lossAmount)} в месяц`;
+        bannerEl.className = 'report-status-banner red';
+        bannerIcon.textContent = '🔴';
+        bannerText.textContent = `Убыток • Отрицательная маржинальность (${fmtPct(d.margin)})`;
+
+        let overText = overArticles.length > 0 
+          ? ` Выше отраслевой нормы ниши: ` + overArticles.map(a => `«${a.name}» ${fmtPct(a.share)} (перерасход сверх нормы: ${fmtMoney(a.amount - (d.revenue * a.norm / 100))})`).join(', ')
+          : ` Самая крупная статья затрат — ${topExpense.name} (${fmtMoney(topExpense.amount)}).`;
+        reason = `Выручки в ${fmtMoney(d.revenue)} недостаточно для покрытия текущих обязательств на ${fmtMoney(d.totalExpenses)}.${overText}`;
+
+        if (overArticles.length > 0) {
+          const prim = overArticles[0];
+          const overVal = Math.round(prim.amount - (d.revenue * prim.norm / 100));
+          actions.push({
+            icon: '✂️',
+            title: `Снизить статью «${prim.name}» на ${fmtMoney(overVal)}`,
+            desc: `В нише «${n.name}» безопасный норматив — до ${prim.norm}% дохода. Возврат к норме сэкономит ${fmtMoney(overVal)} каждый месяц.`
+          });
+        } else {
+          actions.push({
+            icon: '✂️',
+            title: `Оптимизировать расходы на «${topExpense.name}»`,
+            desc: `На эту статью уходит ${fmtMoney(topExpense.amount)} (${fmtPct(topExpense.share)} дохода). Сократите её на 15–20%.`
+          });
+        }
+
+        actions.push({
+          icon: '🎯',
+          title: `Выход в ноль: сократить расходы на ${fmtMoney(lossAmount)} или поднять доход на ${fmtMoney(d.breakEven - d.revenue)}`,
+          desc: `Точка безубыточности составляет ${fmtMoney(d.breakEven)}. При достижении этой выручки бизнес полностью покроет затраты.`
+        });
+
+        actions.push({
+          icon: '📈',
+          title: `Сфокусироваться на самых маржинальных товарах/услугах`,
+          desc: `Выделите 20% позиций с максимальной наценкой, откажитесь от неликвида и стимулируйте повторные визиты постоянных клиентов.`
+        });
+
+      } else if (d.margin < 10) {
+        headlineEl.textContent = `Бизнес работает на грани: прибыль ${fmtMoney(d.profit)}`;
+        bannerEl.className = 'report-status-banner yellow';
+        bannerIcon.textContent = '🟡';
+        bannerText.textContent = `Низкая маржинальность (${fmtPct(d.margin)} < 10%) • Риск кассового разрыва`;
+
+        reason = `Выручка ${fmtMoney(d.revenue)} покрывает расходы (${fmtMoney(d.totalExpenses)}), но чистый остаток мал. Главная нагрузка приходится на статью «${topExpense.name}» (${fmtMoney(topExpense.amount)}, ${fmtPct(topExpense.share)} дохода).`;
+
+        actions.push({
+          icon: '🏷️',
+          title: 'Поднять средний чек на 7–10%',
+          desc: `Небольшое повышение цен или внедрение сопутствующих допродаж даст прямой прирост прибыли на +${fmtMoney(Math.round(d.revenue * 0.08))} в месяц.`
+        });
+
+        actions.push({
+          icon: '⚖️',
+          title: `Удержать расходы в пределах норм ниши «${n.name}»`,
+          desc: `ФОТ не должен превышать ${n.salariesNorm}%, а аренда — ${n.rentNorm}% от ежемесячного дохода.`
+        });
+
+        actions.push({
+          icon: '🛡️',
+          title: 'Сформировать подушку безопасности',
+          desc: `Начните откладывать 30% чистой прибыли, чтобы покрыть как минимум 1 месяц расходов (${fmtMoney(d.totalExpenses)}).`
+        });
+
+      } else {
+        headlineEl.textContent = `Бизнес приносит ${fmtMoney(d.profit)} чистой прибыли`;
+        bannerEl.className = 'report-status-banner green';
+        bannerIcon.textContent = '🟢';
+        bannerText.textContent = `Здоровая прибыль • Маржинальность ${fmtPct(d.margin)}`;
+
+        let overNote = overArticles.length > 0 
+          ? ` Обратите внимание: статья «${overArticles[0].name}» составляет ${fmtPct(overArticles[0].share)} при норме ${overArticles[0].norm}%.`
+          : ` Все статьи расходов укладываются в безопасные нормативы ниши «${n.name}».`;
+        reason = `Доход (${fmtMoney(d.revenue)}) превышает сумму расходов (${fmtMoney(d.totalExpenses)}) на ${fmtMoney(d.profit)}. Доля ФОТ — ${fmtPct(d.salariesShare)}, аренда — ${fmtPct(d.rentShare)}, реклама — ${fmtPct(d.adsShare)}.${overNote}`;
+
+        actions.push({
+          icon: '🚀',
+          title: `Масштабировать доход на 15–20%`,
+          desc: `При текущей марже это принесёт дополнительно +${fmtMoney(Math.round(d.profit * 0.2))} чистой прибыли за счёт эффекта масштаба.`
+        });
+
+        actions.push({
+          icon: '🛡️',
+          title: `Откладывать 15–20% прибыли (${fmtMoney(Math.round(d.profit * 0.2))}) в резерв`,
+          desc: 'Сформируйте резервный фонд на случай сезонных колебаний спроса или задержек оплат.'
+        });
+
+        actions.push({
+          icon: '🔒',
+          title: `Зафиксировать постоянные расходы на уровне ${fmtMoney(d.rent + d.salaries)}`,
+          desc: `Удерживайте точку безубыточности (${fmtMoney(d.breakEven)}) и не увеличивайте оклады/аренду без роста оборота.`
+        });
+      }
+
+      // 2. Update Table Rows
+      document.getElementById('tbl-revenue-sum').textContent = fmtMoney(d.revenue);
+      document.getElementById('tbl-revenue-pct').textContent = '100.0%';
+
+      document.getElementById('tbl-rent-sum').textContent = fmtMoney(d.rent);
+      document.getElementById('tbl-rent-pct').textContent = fmtPct(d.rentShare);
+
+      document.getElementById('tbl-salaries-sum').textContent = fmtMoney(d.salaries);
+      document.getElementById('tbl-salaries-pct').textContent = fmtPct(d.salariesShare);
+
+      document.getElementById('tbl-ads-sum').textContent = fmtMoney(d.ads);
+      document.getElementById('tbl-ads-pct').textContent = fmtPct(d.adsShare);
+
+      document.getElementById('tbl-other-sum').textContent = fmtMoney(d.other);
+      document.getElementById('tbl-other-pct').textContent = fmtPct(d.otherShare);
+
+      const profitRow = document.getElementById('tbl-row-profit');
+      const profitName = document.getElementById('tbl-profit-name');
+      const profitSum = document.getElementById('tbl-profit-sum');
+      const profitPct = document.getElementById('tbl-profit-pct');
+
+      profitSum.textContent = (d.profit >= 0 ? '+' : '') + fmtMoney(d.profit);
+      profitPct.textContent = fmtPct(d.margin);
+
+      if (d.profit < 0) {
+        profitRow.className = 'row-profit profit-negative';
+        profitName.innerHTML = '<b>🚨 Убыток за месяц</b>';
+      } else if (d.margin < 10) {
+        profitRow.className = 'row-profit profit-warning';
+        profitName.innerHTML = '<b>⚠️ Чистая прибыль (низкая)</b>';
+      } else {
+        profitRow.className = 'row-profit profit-positive';
+        profitName.innerHTML = '<b>✨ Чистая прибыль</b>';
+      }
+
+      // 3. Update Reason
+      document.getElementById('report-reason').textContent = reason;
+
+      // 4. Update Calculation Steps
+      const calcStepsEl = document.getElementById('report-calc-steps');
+      calcStepsEl.innerHTML = `
+        <div class="calc-step-row"><span>1. Выручка (доход):</span><span class="calc-step-val">${fmtMoney(d.revenue)}</span></div>
+        <div class="calc-step-row"><span>2. Суммарные расходы:</span><span class="calc-step-val">${fmtMoney(d.totalExpenses)}</span></div>
+        <div class="calc-step-row" style="font-size:11px; color:#94a3b8; padding-left:10px;">
+          <span>(Аренда ${fmtMoney(d.rent)} + ФОТ ${fmtMoney(d.salaries)} + Реклама ${fmtMoney(d.ads)} + Прочее ${fmtMoney(d.other)})</span>
+        </div>
+        <div class="calc-step-row" style="border-top:1px dashed rgba(255,255,255,0.08); padding-top:4px;">
+          <span>3. Чистый результат (1 - 2):</span><span class="calc-step-val" style="color:${d.profit >= 0 ? '#34d399' : '#fb7185'};">${(d.profit >= 0 ? '+' : '')}${fmtMoney(d.profit)}</span>
+        </div>
+        <div class="calc-step-row"><span>4. Маржинальность (${fmtMoney(d.profit)} / ${fmtMoney(d.revenue)}):</span><span class="calc-step-val">${fmtPct(d.margin)}</span></div>
+        <div class="calc-step-row"><span>5. Порог безубыточности (ноль):</span><span class="calc-step-val">${fmtMoney(d.breakEven)} дохода</span></div>
+      `;
+
+      // 5. Update 3 Action Cards with Icons
+      const actionCardsEl = document.getElementById('report-action-cards');
+      actionCardsEl.innerHTML = '';
+      actions.forEach((act, idx) => {
+        const card = document.createElement('div');
+        card.className = 'single-action-card' + (d.profit < 0 && idx === 0 ? ' loss-border' : '');
+        card.innerHTML = `
+          <div class="action-icon-badge ${d.profit < 0 ? 'loss-badge' : ''}">${act.icon}</div>
+          <div class="action-content-text">
+            <strong>${idx + 1}. ${act.title}</strong>
+            ${act.desc}
+          </div>
+        `;
+        actionCardsEl.appendChild(card);
+      });
+    }
+
+    // Forecasting Module
+    function setForecastDelta(val) {
+      forecastDeltaPct = parseFloat(val);
+      document.getElementById('forecast-range-slider').value = val;
+      updateForecastBtns(val);
+      runForecastCalculation();
+    }
+
+    function handleForecastSliderChange(val) {
+      forecastDeltaPct = parseFloat(val);
+      updateForecastBtns(val);
+      runForecastCalculation();
+    }
+
+    function updateForecastBtns(val) {
+      document.querySelectorAll('.quick-pct-btn').forEach(b => {
+        b.classList.toggle('active', parseFloat(b.textContent) === parseFloat(val));
+      });
+    }
+
+    function runForecastCalculation() {
+      const { revenue, isRevenueEntered, rent, salaries, ads, other } = getValues();
+      const niche = NICHES[currentNicheKey] || NICHES.cafe;
+      if (!isRevenueEntered) return;
+
+      const delta = forecastDeltaPct;
+      const factor = 1 + (delta / 100);
+
+      document.getElementById('forecast-delta-badge').textContent = (delta >= 0 ? '+' : '') + delta + '%';
+      document.getElementById('forecast-delta-badge').style.color = delta >= 0 ? '#34d399' : '#fb7185';
+
+      const v = niche.varShare;
+      const fixed = rent + (salaries * (1 - v.salaries)) + (ads * (1 - v.ads)) + (other * (1 - v.other));
+      const variable = (salaries * v.salaries) + (ads * v.ads) + (other * v.other);
+
+      document.getElementById('fc-fixed-sum').textContent = fmtMoney(fixed);
+      document.getElementById('fc-variable-sum').textContent = fmtMoney(variable);
+
+      const fRevenue = Math.max(0, revenue * factor);
+      const fVariable = Math.max(0, variable * factor);
+      const fExpenses = fixed + fVariable;
+      const fProfit = fRevenue - fExpenses;
+
+      const curExpenses = rent + salaries + ads + other;
+      const curProfit = revenue - curExpenses;
+      const pDiff = fProfit - curProfit;
+      const pDiffPct = curProfit !== 0 ? (pDiff / Math.abs(curProfit)) * 100 : (pDiff >= 0 ? 100 : -100);
+
+      document.getElementById('forecast-revenue-num').textContent = fmtMoney(fRevenue);
+      document.getElementById('forecast-revenue-tag').textContent = (fRevenue - revenue >= 0 ? '+' : '') + fmtMoney(fRevenue - revenue);
+
+      document.getElementById('forecast-expenses-num').textContent = fmtMoney(fExpenses);
+      document.getElementById('forecast-expenses-tag').textContent = (fExpenses - curExpenses >= 0 ? '+' : '') + fmtMoney(fExpenses - curExpenses);
+
+      const fProfitEl = document.getElementById('forecast-profit-num');
+      fProfitEl.textContent = (fProfit >= 0 ? '+' : '') + fmtMoney(fProfit);
+      fProfitEl.className = 'metric-val large ' + (fProfit >= 0 ? 'val-positive' : 'val-negative');
+
+      const fTag = document.getElementById('forecast-profit-delta-tag');
+      fTag.textContent = `${pDiff >= 0 ? '+' : ''}${fmtPct(pDiffPct)} к текущей прибыли`;
+      fTag.className = 'label-tag ' + (pDiff >= 0 ? 'badge-positive' : 'badge-negative');
+
+      document.getElementById('forecast-profit-diff-text').innerHTML = `Прирост прибыли: <b>${pDiff >= 0 ? '+' : ''}${fmtMoney(pDiff)}</b>`;
+
+      const levText = document.getElementById('forecast-leverage-text');
+      if (delta > 0) {
+        const mult = delta > 0 && pDiffPct > 0 ? (pDiffPct / delta).toFixed(1) : '1.0';
+        levText.innerHTML = `💡 <b>Эффект операционного рычага:</b> при росте дохода на <b>+${delta}%</b> прибыль растёт на <b>+${fmtPct(pDiffPct)}</b> (в <b>${mult}x</b> быстрее!), так как постоянные расходы (${fmtMoney(fixed)}) зафиксированы.`;
+      } else if (delta < 0) {
+        levText.innerHTML = `⚠️ <b>Риск падения:</b> при снижении выручки на <b>${delta}%</b> прибыль упадёт на <b>${fmtPct(Math.abs(pDiffPct))}</b> (${fmtMoney(pDiff)}), так как постоянные расходы (${fmtMoney(fixed)}) продолжат начисляться.`;
+      } else {
+        levText.innerHTML = `Текущая структура: <b>${fmtMoney(fixed)}</b> постоянных и <b>${fmtMoney(variable)}</b> переменных затрат. Измените процент выше для симуляции.`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // CURRENCY CONVERTER MODULE
+    // -------------------------------------------------------------
+    async function fetchLiveRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.rates) {
+            exchangeRates = { ...exchangeRates, ...data.rates };
+            ratesLastUpdated = new Date().toLocaleDateString('ru-RU');
+            localStorage.setItem(RATES_STORAGE_KEY, JSON.stringify({ rates: exchangeRates, date: ratesLastUpdated }));
+            document.getElementById('rates-status-tag').textContent = 'Курсы обновлены онлайн';
+            document.getElementById('curr-update-date').textContent = `Курсы актуальны на: ${ratesLastUpdated}`;
+            convertCurrency();
+          }
+        }
+      } catch (e) {
+        // Fallback to cached or predefined
+        const cached = localStorage.getItem(RATES_STORAGE_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            exchangeRates = parsed.rates;
+            ratesLastUpdated = parsed.date;
+          } catch(err) {}
+        }
+        document.getElementById('rates-status-tag').textContent = 'Офлайн / Кеш';
+        document.getElementById('curr-update-date').textContent = `Курс ориентировочный, дата обновления: ${ratesLastUpdated}`;
+      }
+    }
+
+    function convertCurrency() {
+      const fromCurr = document.getElementById('curr-from-select').value;
+      const toCurr = document.getElementById('curr-to-select').value;
+      const amount = Math.max(0, parseFloat(document.getElementById('curr-amount-input').value) || 0);
+
+      document.getElementById('btn-profit-curr-name').textContent = toCurr;
+
+      const rateFrom = exchangeRates[fromCurr] || 1;
+      const rateTo = exchangeRates[toCurr] || 1;
+
+      // Rate: 1 fromCurr = ? toCurr
+      const directRate = (1 / rateFrom) * rateTo;
+      document.getElementById('custom-rate-input').value = directRate.toFixed(4);
+
+      const converted = amount * directRate;
+
+      document.getElementById('curr-result-preview').textContent = `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(converted)} ${toCurr}`;
+      document.getElementById('curr-result-big').textContent = `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(converted)} ${toCurr}`;
+      document.getElementById('curr-rate-label').textContent = `1 ${fromCurr} = ${directRate.toFixed(4)} ${toCurr}`;
+    }
+
+    function swapCurrencies() {
+      const fromEl = document.getElementById('curr-from-select');
+      const toEl = document.getElementById('curr-to-select');
+      const temp = fromEl.value;
+      fromEl.value = toEl.value;
+      toEl.value = temp;
+      convertCurrency();
+    }
+
+    function applyCustomRate() {
+      const customVal = parseFloat(document.getElementById('custom-rate-input').value) || 0;
+      if (customVal > 0) {
+        const fromCurr = document.getElementById('curr-from-select').value;
+        const toCurr = document.getElementById('curr-to-select').value;
+        const amount = Math.max(0, parseFloat(document.getElementById('curr-amount-input').value) || 0);
+        const converted = amount * customVal;
+
+        document.getElementById('curr-result-preview').textContent = `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(converted)} ${toCurr}`;
+        document.getElementById('curr-result-big').textContent = `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(converted)} ${toCurr}`;
+        document.getElementById('curr-rate-label').textContent = `1 ${fromCurr} = ${customVal.toFixed(4)} ${toCurr} (ручной ввод)`;
+      }
+    }
+
+    function convertCurrentProfitToSelectedCurrency() {
+      const { revenue, rent, salaries, ads, other } = getValues();
+      const profit = revenue - (rent + salaries + ads + other);
+
+      const targetCurr = document.getElementById('curr-to-select').value;
+      // Default base currency in app is RUB or based on selected symbol
+      let appBaseCurrency = 'RUB';
+      if (currentCurrency === '$') appBaseCurrency = 'USD';
+      if (currentCurrency === '€') appBaseCurrency = 'EUR';
+      if (currentCurrency === '₸') appBaseCurrency = 'KZT';
+
+      const rateFrom = exchangeRates[appBaseCurrency] || 1;
+      const rateTo = exchangeRates[targetCurr] || 1;
+      const crossRate = (1 / rateFrom) * rateTo;
+
+      const convertedProfit = profit * crossRate;
+      const disp = document.getElementById('profit-converted-display');
+      disp.style.display = 'block';
+
+      const isProfitable = profit >= 0;
+      disp.innerHTML = `
+        💰 <b>Чистая прибыль бизнеса:</b> ${fmtMoney(profit)}<br/>
+        ➡️ В пересчёте: <b style="font-size:16px; color:#ffffff;">${isProfitable ? '+' : ''}${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(convertedProfit)} ${targetCurr}</b><br/>
+        <span style="font-size:11px; opacity:0.8;">(по курсу 1 ${appBaseCurrency} = ${crossRate.toFixed(4)} ${targetCurr})</span>
+      `;
+      showToast('Прибыль пересчитана');
+    }
+
+    // -------------------------------------------------------------
+    // HISTORY & MONTHS STORAGE
+    // -------------------------------------------------------------
+    function initLocalStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        const seed = [
+          { id: '2026-08', monthName: 'Август 2026', niche: 'cafe', currency: '₽', revenue: 500000, rent: 90000, salaries: 175000, ads: 30000, other: 140000, profit: 65000, totalExpenses: 435000, margin: 13.0 },
+          { id: '2026-09', monthName: 'Сентябрь 2026', niche: 'cafe', currency: '₽', revenue: 550000, rent: 90000, salaries: 160000, ads: 45000, other: 145000, profit: 110000, totalExpenses: 440000, margin: 20.0 }
+        ];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+      }
+    }
+
+    function getHistoryData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
+    }
+
+    function saveHistoryData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function renderMonthsDropdown() {
+      const select = document.getElementById('period-month-select');
+      select.innerHTML = '';
+      AVAILABLE_MONTHS.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = m.name;
+        if (m.id === currentSelectedMonthId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function handleMonthChange() {
+      currentSelectedMonthId = document.getElementById('period-month-select').value;
+      const history = getHistoryData();
+      const found = history.find(h => h.id === currentSelectedMonthId);
+      if (found) {
+        setValues({ revenue: found.revenue, rent: found.rent, salaries: found.salaries, ads: found.ads, other: found.other });
+        if (found.niche) selectNiche(found.niche);
+        showToast(`Загружен ${found.monthName}`);
+      }
+      runAnalysis();
+      updateComparisonFromHistory();
+    }
+
+    function saveCurrentMonth() {
+      const { revenue, rent, salaries, ads, other } = getValues();
+      const mObj = AVAILABLE_MONTHS.find(m => m.id === currentSelectedMonthId) || { id: currentSelectedMonthId, name: currentSelectedMonthId };
+      const totalExpenses = rent + salaries + ads + other;
+      const profit = revenue - totalExpenses;
+      const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+      const record = { id: currentSelectedMonthId, monthName: mObj.name, niche: currentNicheKey, currency: currentCurrency, revenue, rent, salaries, ads, other, totalExpenses, profit, margin };
+      let history = getHistoryData();
+      const idx = history.findIndex(h => h.id === currentSelectedMonthId);
+      if (idx >= 0) history[idx] = record;
+      else history.push(record);
+
+      history.sort((a,b) => b.id.localeCompare(a.id));
+      saveHistoryData(history);
+      renderHistoryList();
+      updateComparisonFromHistory();
+      showToast(`Расчёт за ${mObj.name} сохранён!`);
+    }
+
+    function renderHistoryList() {
+      const list = document.getElementById('history-list-container');
+      const history = getHistoryData();
+      document.getElementById('history-count-badge').textContent = `${history.length}`;
+      list.innerHTML = '';
+
+      if (history.length === 0) {
+        list.innerHTML = '<div style="font-size:12px; color:#64748b; text-align:center; padding:10px;">История пуста</div>';
+        return;
+      }
+
+      history.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `history-item ${item.id === currentSelectedMonthId ? 'active-month' : ''}`;
+        div.onclick = () => {
+          currentSelectedMonthId = item.id;
+          document.getElementById('period-month-select').value = item.id;
+          handleMonthChange();
+        };
+
+        const isPos = item.profit >= 0;
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700; color:#fff; font-size:13px;">${item.monthName}</div>
+            <div style="font-size:10.5px; color:#94a3b8;">Выручка: ${new Intl.NumberFormat('ru-RU').format(item.revenue)} ${item.currency || '₽'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:800; font-size:13px;" class="${isPos ? 'val-positive' : 'val-negative'}">
+              ${isPos ? '+' : ''}${new Intl.NumberFormat('ru-RU').format(item.profit)} ${item.currency || '₽'}
+            </div>
+            <div style="font-size:10px; color:#94a3b8;">маржа ${item.margin.toFixed(1)}%</div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function updateComparisonFromHistory() {
+      const history = getHistoryData();
+      const current = history.find(h => h.id === currentSelectedMonthId);
+      const prev = history.find(h => h.id < currentSelectedMonthId);
+      const compCard = document.getElementById('compare-section');
+
+      if (!current || !prev) {
+        compCard.style.display = 'none';
+        return;
+      }
+
+      compCard.style.display = 'flex';
+      document.getElementById('compare-prev-month-name').textContent = prev.monthName;
+
+      const pDiff = current.profit - prev.profit;
+      const pDiffPct = prev.profit !== 0 ? (pDiff / Math.abs(prev.profit)) * 100 : (pDiff >= 0 ? 100 : -100);
+      document.getElementById('compare-profit-val').textContent = (pDiff >= 0 ? '+' : '') + fmtPct(pDiffPct);
+      document.getElementById('compare-profit-val').className = pDiff >= 0 ? 'val-positive' : 'val-negative';
+      document.getElementById('compare-profit-tag').textContent = (pDiff >= 0 ? '+' : '') + fmtMoney(pDiff);
+
+      const rDiff = current.revenue - prev.revenue;
+      const rDiffPct = prev.revenue > 0 ? (rDiff / prev.revenue) * 100 : 0;
+      document.getElementById('compare-revenue-val').textContent = (rDiff >= 0 ? '+' : '') + fmtPct(rDiffPct);
+      document.getElementById('compare-revenue-val').className = rDiff >= 0 ? 'val-positive' : 'val-negative';
+      document.getElementById('compare-revenue-tag').textContent = (rDiff >= 0 ? '+' : '') + fmtMoney(rDiff);
+
+      // Max changed article
+      const exps = [
+        { name: 'Аренда', diff: current.rent - prev.rent },
+        { name: 'ФОТ', diff: current.salaries - prev.salaries },
+        { name: 'Реклама', diff: current.ads - prev.ads },
+        { name: 'Прочее', diff: current.other - prev.other }
+      ];
+      exps.sort((a,b) => Math.abs(b.diff) - Math.abs(a.diff));
+      const top = exps[0];
+      document.getElementById('key-change-text').innerHTML = `
+        Больше всего изменились расходы на: <b>${top.name}</b> (${top.diff >= 0 ? 'выросли на +' : 'снизились на -'}${fmtMoney(Math.abs(top.diff))}).
+      `;
+    }
+
+    function copyReport() {
+      const conc = document.getElementById('report-conclusion').textContent;
+      const calc = document.getElementById('report-calc').textContent;
+      navigator.clipboard.writeText(`📊 «БИЗНЕС-АНАЛИТИК»\n📌 Вывод: ${conc}\n🧮 Расчёт:\n${calc}`).then(() => {
+        showToast('Отчёт скопирован!');
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // -------------------------------------------------------------
+    // WEB NOTIFICATIONS API (Push Reminders)
+    // -------------------------------------------------------------
+    const NOTIF_STORAGE_KEY = 'business_analyst_notif_v1';
+    let notifSettings = {
+      enabled: false,
+      frequency: 'daily',
+      time: '19:00',
+      lastNotifiedDate: ''
+    };
+
+    function openNotifSection() {
+      switchTab('history');
+      const card = document.getElementById('notif-settings-card');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth' });
+        card.style.boxShadow = '0 0 0 2px var(--primary), 0 10px 30px rgba(37,99,235,0.4)';
+        setTimeout(() => {
+          card.style.boxShadow = '';
+        }, 1500);
+      }
+    }
+
+    function initNotificationSettings() {
+      try {
+        const saved = localStorage.getItem(NOTIF_STORAGE_KEY);
+        if (saved) {
+          notifSettings = { ...notifSettings, ...JSON.parse(saved) };
+        }
+      } catch (e) {}
+
+      updateNotifUI();
+      // Check every 60s
+      setInterval(checkAndTriggerScheduledReminder, 60000);
+      checkAndTriggerScheduledReminder();
+    }
+
+    function updateNotifUI() {
+      const isGranted = 'Notification' in window && Notification.permission === 'granted';
+      const isEnabled = notifSettings.enabled && isGranted;
+
+      // Badges & Buttons
+      const statusBadge = document.getElementById('notif-status-badge');
+      const toggleBtn = document.getElementById('toggle-notif-btn');
+      const bellIcon = document.getElementById('header-bell-icon');
+      const timeInput = document.getElementById('notif-time-input');
+
+      if (timeInput) timeInput.value = notifSettings.time || '19:00';
+
+      // Frequency buttons
+      const dailyBtn = document.getElementById('btn-freq-daily');
+      const weeklyBtn = document.getElementById('btn-freq-weekly');
+      if (dailyBtn && weeklyBtn) {
+        dailyBtn.classList.toggle('active', notifSettings.frequency === 'daily');
+        weeklyBtn.classList.toggle('active', notifSettings.frequency === 'weekly');
+      }
+
+      if (statusBadge) {
+        if (isEnabled) {
+          statusBadge.className = 'label-tag badge-positive';
+          statusBadge.textContent = notifSettings.frequency === 'daily' ? 'Ежедневно в ' + notifSettings.time : 'Еженедельно в ' + notifSettings.time;
+        } else {
+          statusBadge.className = 'label-tag';
+          statusBadge.textContent = 'Выключено';
+        }
+      }
+
+      if (toggleBtn) {
+        if (isEnabled) {
+          toggleBtn.textContent = 'Отключить';
+          toggleBtn.style.background = '#334155';
+        } else {
+          toggleBtn.textContent = 'Включить';
+          toggleBtn.style.background = '';
+        }
+      }
+
+      if (bellIcon) {
+        bellIcon.textContent = isEnabled ? '🔔' : '🔕';
+      }
+
+      const permNote = document.getElementById('notif-perm-status-note');
+      if (permNote) {
+        if (!('Notification' in window)) {
+          permNote.textContent = 'Web Notifications не поддерживаются в этом браузере';
+          permNote.style.color = '#fb7185';
+        } else if (Notification.permission === 'denied') {
+          permNote.textContent = 'Уведомления заблокированы в настройках браузера';
+          permNote.style.color = '#fb7185';
+        } else {
+          permNote.textContent = 'Текст: «Время обновить данные вашего бизнеса»';
+          permNote.style.color = '#64748b';
+        }
+      }
+    }
+
+    function setNotifFrequency(freq) {
+      notifSettings.frequency = freq;
+      saveNotificationSettings();
+      updateNotifUI();
+      showToast(`Выбрано: ${freq === 'daily' ? 'Ежедневно' : 'Еженедельно'}`);
+    }
+
+    function saveNotificationSettings() {
+      const timeInput = document.getElementById('notif-time-input');
+      if (timeInput) notifSettings.time = timeInput.value;
+      localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifSettings));
+      updateNotifUI();
+    }
+
+    function toggleNotifications() {
+      if (!('Notification' in window)) {
+        showToast('Уведомления не поддерживаются в этом браузере');
+        return;
+      }
+
+      if (notifSettings.enabled) {
+        notifSettings.enabled = false;
+        saveNotificationSettings();
+        showToast('Напоминания отключены');
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        notifSettings.enabled = true;
+        saveNotificationSettings();
+        showToast('Напоминания успешно включены!');
+        sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            notifSettings.enabled = true;
+            saveNotificationSettings();
+            showToast('Напоминания успешно включены!');
+            sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+          } else {
+            showToast('Разрешение на уведомления отклонено');
+            updateNotifUI();
+          }
+        });
+      } else {
+        alert('Уведомления заблокированы сайту в настройках браузера. Разрешите уведомления в настройках вашего браузера.');
+      }
+    }
+
+    function testPushNotification() {
+      if (!('Notification' in window)) {
+        showToast('Уведомления не поддерживаются браузером');
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+        showToast('Напоминание отправлено!');
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            notifSettings.enabled = true;
+            saveNotificationSettings();
+            sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+            showToast('Напоминание отправлено!');
+          } else {
+            showToast('Разрешение отклонено');
+          }
+        });
+      } else {
+        alert('Разрешите уведомления в настройках сайта в браузере');
+      }
+    }
+
+    function sendBrowserPush(title, body) {
+      const options = {
+        body: body,
+        icon: '/icon.svg',
+        badge: '/icon.svg',
+        tag: 'biz-data-reminder',
+        renotify: true,
+        data: { url: window.location.href }
+      };
+
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(reg => {
+          reg.showNotification(title, options);
+        }).catch(() => {
+          try { new Notification(title, options); } catch(e) {}
+        });
+      } else {
+        try { new Notification(title, options); } catch(e) {}
+      }
+    }
+
+    function checkAndTriggerScheduledReminder() {
+      if (!notifSettings.enabled) return;
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      const currentHours = String(now.getHours()).padStart(2, '0');
+      const currentMins = String(now.getMinutes()).padStart(2, '0');
+      const currentTimeStr = `${currentHours}:${currentMins}`;
+
+      // Check if time matches (or passed within current minute)
+      if (currentTimeStr === notifSettings.time) {
+        const todayDateStr = now.toDateString();
+
+        if (notifSettings.frequency === 'daily') {
+          if (notifSettings.lastNotifiedDate !== todayDateStr) {
+            notifSettings.lastNotifiedDate = todayDateStr;
+            saveNotificationSettings();
+            sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+          }
+        } else if (notifSettings.frequency === 'weekly') {
+          // Send on Sundays (day 0) or Fridays (day 5)
+          const currentDay = now.getDay();
+          const weekKey = `${now.getFullYear()}-W${Math.ceil((now.getDate() + 6) / 7)}`;
+          if ((currentDay === 0 || currentDay === 5) && notifSettings.lastNotifiedDate !== weekKey) {
+            notifSettings.lastNotifiedDate = weekKey;
+            saveNotificationSettings();
+            sendBrowserPush('📊 Бизнес-аналитик', 'Время обновить данные вашего бизнеса');
+          }
+        }
+      }
+    }
+
+    // PWA Install
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      document.getElementById('install-banner').style.display = 'flex';
+    });
+
+    function triggerPWAInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(() => {
+          document.getElementById('install-banner').style.display = 'none';
+        });
+      } else {
+        alert('Для установки нажмите меню браузера ⋮ -> «Добавить на главный экран»');
+      }
+    }
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+
+    // Start
+    window.addEventListener('DOMContentLoaded', () => {
+      initLocalStorage();
+      renderMonthsDropdown();
+      renderHistoryList();
+      selectNiche('cafe');
+      handleMonthChange();
+      fetchLiveRates();
+      initNotificationSettings();
+    });
+  </script>
+</body>
+</html>
